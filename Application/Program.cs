@@ -1,4 +1,5 @@
 ﻿using Application;
+using System;
 using System.Globalization;
 using System.Net.Http.Json;
 
@@ -39,16 +40,15 @@ public class Program
 
     public void DisplayTimeDifference(string location, DateTimeOffset ukTime, DateTimeOffset canadaTime)
     {
-        // Calculate the time difference in minutes
-        var timeDifference = (ukTime - canadaTime).TotalMinutes;
+        double timeDifference = ukTime.Subtract(canadaTime.DateTime).TotalHours;
 
         switch (location)
         {
             case "UK":
-                Console.WriteLine($"You are {timeDifference}m ahead of Canada");
+                Console.WriteLine($"You are {timeDifference}h ahead of Canada");
                 break;
             case "Canada":
-                Console.WriteLine($"You are {-timeDifference}m behind UK");
+                Console.WriteLine($"You are {timeDifference}h behind UK");
                 break;
             default:
                 Console.WriteLine("Wrong location value. It can be UK or Canada");

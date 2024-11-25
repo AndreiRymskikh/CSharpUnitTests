@@ -62,7 +62,7 @@ namespace Tests
         }
 
         [TestMethod]
-        public void GetTimeDifferenceReturnlsCorrectTimeDifference()
+        public void GetTimeDifferenceReturnlsCorrectTimeDifferenceUkLocation()
         {
             var ukDateTime = new DateTimeOffset(2024, 11, 20, 08, 16, 14, TimeSpan.FromHours(0));
             var canadaDateTime = new DateTimeOffset(2024, 11, 20, 03, 16, 14, TimeSpan.FromHours(-5));
@@ -74,7 +74,24 @@ namespace Tests
             program.DisplayTimeDifference("UK", ukDateTime, canadaDateTime);
             var result = sw.ToString().Trim();
 
-            var expectedOutput = $"You are 300m ahead of Canada";
+            var expectedOutput = $"You are 6h ahead of Canada";
+            Assert.AreEqual(expectedOutput, result);
+        }
+
+        [TestMethod]
+        public void GetTimeDifferenceReturnlsCorrectTimeDifferenceCanadaLocation()
+        {
+            var ukDateTime = new DateTimeOffset(2024, 11, 20, 08, 16, 14, TimeSpan.FromHours(0));
+            var canadaDateTime = new DateTimeOffset(2024, 11, 20, 03, 16, 14, TimeSpan.FromHours(-5));
+            var program = new Program(null);
+
+            var sw = new StringWriter();
+
+            Console.SetOut(sw);
+            program.DisplayTimeDifference("Canada", ukDateTime, canadaDateTime);
+            var result = sw.ToString().Trim();
+
+            var expectedOutput = $"You are 6h behind UK";
             Assert.AreEqual(expectedOutput, result);
         }
 
