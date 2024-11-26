@@ -9,6 +9,13 @@ namespace Tests
     [TestClass]
     public class Tests
     {
+        private readonly Helpers _helpers;
+
+        public Tests()
+        {
+            _helpers = new Helpers();
+        }
+
         [TestMethod]
         public void GetDateTimeReturnsExpectedDateTime()
         {
@@ -50,11 +57,9 @@ namespace Tests
             var canadaDateTime = new DateTimeOffset(2024, 11, 20, 03, 16, 14, TimeSpan.FromHours(-5));
             var program = new Program(null);
 
-            var sw = new StringWriter();
-        
-            Console.SetOut(sw);
+            _helpers.ConsoleSetOut();
             program.DisplayTimeDifference("UK", ukDateTime, canadaDateTime);
-            var result = sw.ToString().Trim();
+            var result = _helpers.ConsoleOutput();
 
             var expectedOutput = "You are 6h ahead of Canada";
             Assert.AreEqual(expectedOutput, result);
@@ -67,11 +72,9 @@ namespace Tests
             var canadaDateTime = new DateTimeOffset(2024, 11, 20, 03, 16, 14, TimeSpan.FromHours(-5));
             var program = new Program(null);
 
-            var sw = new StringWriter();
-
-            Console.SetOut(sw);
+            _helpers.ConsoleSetOut();
             program.DisplayTimeDifference("Canada", ukDateTime, canadaDateTime);
-            var result = sw.ToString().Trim();
+            var result = _helpers.ConsoleOutput();
 
             var expectedOutput = "You are 6h behind UK";
             Assert.AreEqual(expectedOutput, result);
@@ -84,11 +87,9 @@ namespace Tests
             var canadaDateTime = new DateTimeOffset(2024, 11, 20, 03, 16, 14, TimeSpan.FromHours(-5));
             var program = new Program(null);
 
-            var sw = new StringWriter();
-
-            Console.SetOut(sw);
+            _helpers.ConsoleSetOut();
             program.DisplayTimeDifference("WrongLocation", ukDateTime, canadaDateTime);
-            var result = sw.ToString().Trim();
+            var result = _helpers.ConsoleOutput();
 
             var expectedOutput = "Wrong location value. It can be UK or Canada";
             Assert.AreEqual(expectedOutput, result);
@@ -101,11 +102,9 @@ namespace Tests
             var program = new Program(null);
             var expectedOutput = "Test Label: Wednesday 20 November 2024 08:16:14";
 
-            var sw = new StringWriter();
-            
-            Console.SetOut(sw);
+            _helpers.ConsoleSetOut();
             program.DisplayDateTime("Test Label", dateTime);
-            var result = sw.ToString().Trim();
+            var result = _helpers.ConsoleOutput();
 
             Assert.AreEqual(expectedOutput, result);
         }
