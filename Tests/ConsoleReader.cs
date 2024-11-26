@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Tests
 {
-    public class Helpers
+    public class ConsoleReader
     {
         public StringWriter stringWriter;
 
-        public void ConsoleSetOut()
+        public ConsoleReader()
         {
             stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
