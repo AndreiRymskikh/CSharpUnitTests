@@ -1,12 +1,12 @@
 ﻿using Application;
 using System;
 using System.Globalization;
+using System.Net;
 using System.Net.Http.Json;
 
 public class Program
 {
     private readonly HttpClient _client;
-    private readonly string _dateTimeFormatter = "dddd dd MMMM yyyy HH:mm:ss";
 
     public Program(HttpClient client)
     {
@@ -24,23 +24,38 @@ public class Program
         DisplayDateTime("UK Time", ukDateTime);
         DisplayDateTime("Canada Time", canadaDateTime);
 
-        DisplayTimeDifference(location, ukDateTime, canadaDateTime);
+        DisplayTimeDifference(location, ukDateTime.DateTime, canadaDateTime.DateTime);
     }
 
+    //What will happen in case of empty response? Or responce will be 500 error
     public DateTimeOffset GetDateTime(string url)
     {
-        var response = _client.GetFromJsonAsync<WorldTimeAPIResponse>(url).Result;
-        return DateTimeOffset.ParseExact(response.datetime, "yyyy-MM-dd'T'HH:mm:ss.FFFFFFzzz", CultureInfo.InvariantCulture);
+        try
+        {
+            var response = _client.GetFromJsonAsync<WorldTimeAPIResponse>(url).Result;
+
+            return DateTimeOffset.ParseExact(
+                response.datetime,
+                DateTimeFormats.DateTimeFormatToParse,
+                CultureInfo.InvariantCulture
+                );
+        }
+        catch (Exception ex) when (ex.InnerException is HttpRequestException httpRequestException &&
+        httpRequestException.StatusCode == HttpStatusCode.BadGateway)
+        {
+            throw new Exception("Bad Gateway error occurred while fetching the date and time.");
+        }
+
     }
 
     public void DisplayDateTime(string label, DateTimeOffset dateTime)
     {
-        Console.WriteLine($"{label}: {dateTime.ToString(_dateTimeFormatter)}");
+        Console.WriteLine($"{label}: {dateTime.ToString(DateTimeFormats.DateTimeFormatter)}");
     }
 
-    public void DisplayTimeDifference(string location, DateTimeOffset ukTime, DateTimeOffset canadaTime)
+    public void DisplayTimeDifference(string location, DateTime ukTime, DateTime canadaTime)
     {
-        double timeDifference = ukTime.Subtract(canadaTime.DateTime).TotalHours;
+        double timeDifference = ukTime.Subtract(canadaTime).TotalHours;
 
         switch (location)
         {

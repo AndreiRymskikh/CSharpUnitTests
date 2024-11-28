@@ -51,10 +51,10 @@ namespace Tests
             var program = new Program(null);
 
             var consoleOutputReader = new ConsoleReader();
-            program.DisplayTimeDifference("UK", ukDateTime, canadaDateTime);
+            program.DisplayTimeDifference("UK", ukDateTime.DateTime, canadaDateTime.DateTime);
             var result = consoleOutputReader.ConsoleOutput();
 
-            var expectedOutput = "You are 6h ahead of Canada";
+            var expectedOutput = "You are 5h ahead of Canada";
             Assert.AreEqual(expectedOutput, result);
         }
 
@@ -66,10 +66,10 @@ namespace Tests
             var program = new Program(null);
 
             var consoleOutputReader = new ConsoleReader();
-            program.DisplayTimeDifference("Canada", ukDateTime, canadaDateTime);
+            program.DisplayTimeDifference("Canada", ukDateTime.DateTime, canadaDateTime.DateTime);
             var result = consoleOutputReader.ConsoleOutput();
 
-            var expectedOutput = "You are 6h behind UK";
+            var expectedOutput = "You are 5h behind UK";
             Assert.AreEqual(expectedOutput, result);
         }
 
@@ -81,7 +81,7 @@ namespace Tests
             var program = new Program(null);
 
             var consoleOutputReader = new ConsoleReader();
-            program.DisplayTimeDifference("WrongLocation", ukDateTime, canadaDateTime);
+            program.DisplayTimeDifference("WrongLocation", ukDateTime.DateTime, canadaDateTime.DateTime);
             var result = consoleOutputReader.ConsoleOutput();
 
             var expectedOutput = "Wrong location value. It can be UK or Canada";
@@ -100,6 +100,43 @@ namespace Tests
             var result = consoleOutputReader.ConsoleOutput();
 
             Assert.AreEqual(expectedOutput, result);
+        }
+
+        [TestMethod]
+        public void GetDateTimeReturnsCorrectBadGatewayError()
+        {
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            var expectedResponse = new WorldTimeAPIResponse
+            {
+                datetime = null
+            };
+
+            mockHttpMessageHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>(
+            "SendAsync",
+            ItExpr.IsAny<HttpRequestMessage>(),
+            ItExpr.IsAny<CancellationToken>()
+            )
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = System.Net.HttpStatusCode.BadGateway,
+                Content = JsonContent.Create(expectedResponse)
+            });
+
+            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            var program = new Program(httpClient);
+            string result = null;
+
+            try 
+            {
+                program.GetDateTime("http://worldtimeapi.org/api/timezone/America/Toronto");
+            }
+            catch(Exception ex) {
+                result = ex.Message;
+            }
+            
+            var expectedErrorMessage = "Bad Gateway error occurred while fetching the date and time.";
+            Assert.AreEqual(expectedErrorMessage, result);
         }
     }
 }
