@@ -106,10 +106,6 @@ namespace Tests
         public void GetDateTimeReturnsCorrectBadGatewayError()
         {
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            var expectedResponse = new WorldTimeAPIResponse
-            {
-                datetime = null
-            };
 
             mockHttpMessageHandler.Protected()
             .Setup<Task<HttpResponseMessage>>(
@@ -119,8 +115,7 @@ namespace Tests
             )
             .ReturnsAsync(new HttpResponseMessage
             {
-                StatusCode = System.Net.HttpStatusCode.BadGateway,
-                Content = JsonContent.Create(expectedResponse)
+                StatusCode = System.Net.HttpStatusCode.BadGateway
             });
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
