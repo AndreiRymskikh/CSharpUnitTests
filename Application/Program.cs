@@ -1,5 +1,5 @@
 ﻿using Application;
-using System;
+using Application.Constants;
 using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
@@ -15,8 +15,8 @@ public class Program
 
     public void Run()
     {
-        var canadaDateTime = GetDateTime("http://worldtimeapi.org/api/timezone/America/Toronto");
-        var ukDateTime = GetDateTime("http://worldtimeapi.org/api/timezone/Europe/London");
+        var canadaDateTime = GetDateTime(LocationUrls.WorldTimeTorontoUrl);
+        var ukDateTime = GetDateTime(LocationUrls.WorldTimeLondonUrl);
 
         Console.WriteLine("Please, specify your location (UK or Canada):");
         string location = Console.ReadLine();
@@ -44,6 +44,11 @@ public class Program
         httpRequestException.StatusCode == HttpStatusCode.BadGateway)
         {
             throw new Exception("Bad Gateway error occurred while fetching the date and time.");
+        }
+        catch (Exception ex) when (ex.InnerException is HttpRequestException httpRequestException &&
+        httpRequestException.StatusCode == HttpStatusCode.NotFound)
+        {
+            throw new Exception("The endpoint is Not found. Please, try later.");
         }
 
     }

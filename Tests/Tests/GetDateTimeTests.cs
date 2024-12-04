@@ -1,9 +1,7 @@
-﻿using Application;
-using Moq.Protected;
-using Moq;
-using System.Globalization;
+﻿using System.Globalization;
 using Tests.Utilities;
 using System.Net;
+using Application.Constants;
 
 
 namespace Tests.Tests
@@ -21,7 +19,7 @@ namespace Tests.Tests
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
             var program = new Program(httpClient);
 
-            var result = program.GetDateTime("http://worldtimeapi.org/api/timezone/America/Toronto");
+            var result = program.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
 
             var expectedDateTimeOffset = DateTimeOffset.ParseExact(
             dateTime,
@@ -44,7 +42,7 @@ namespace Tests.Tests
 
             try
             {
-                program.GetDateTime("http://worldtimeapi.org/api/timezone/America/Toronto");
+                program.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
             }
             catch (Exception ex)
             {
@@ -52,6 +50,29 @@ namespace Tests.Tests
             }
 
             var expectedErrorMessage = "Bad Gateway error occurred while fetching the date and time.";
+            Assert.AreEqual(expectedErrorMessage, result);
+        }
+
+        [TestMethod]
+        public void GetDateTimeReturnsCorrectNotFoundError()
+        {
+            var mockHttpMessageHandler = MockHttpResponseMessage.
+                MockFallureHttpResponse(HttpStatusCode.NotFound);
+
+            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            var program = new Program(httpClient);
+            string result = null;
+
+            try
+            {
+                program.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+
+            var expectedErrorMessage = "The endpoint is Not found. Please, try later.";
             Assert.AreEqual(expectedErrorMessage, result);
         }
     }
