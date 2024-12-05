@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 public class Program
 {
     private readonly HttpClient _client;
+    private string dateTimeStr;
 
     public Program(HttpClient client)
     {
@@ -27,7 +28,6 @@ public class Program
         DisplayTimeDifference(location, ukDateTime.DateTime, canadaDateTime.DateTime);
     }
 
-    //What will happen in case of empty response? Or responce will be 500 error
     public DateTimeOffset GetDateTime(string url)
     {
         try
@@ -55,7 +55,9 @@ public class Program
 
     public void DisplayDateTime(string label, DateTimeOffset dateTime)
     {
-        Console.WriteLine($"{label}: {dateTime.ToString(DateTimeFormats.DateTimeFormatter)}");
+        dateTimeStr = dateTime.ToString(DateTimeFormats.DateTimeFormatter);
+
+        Console.WriteLine($"{label}: {dateTimeStr}");
     }
 
     public void DisplayTimeDifference(string location, DateTime ukTime, DateTime canadaTime)
