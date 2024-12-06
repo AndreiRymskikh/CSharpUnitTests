@@ -1,5 +1,6 @@
 ﻿using Application;
 using Application.Constants;
+using Application.Weather;
 using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
@@ -7,20 +8,24 @@ using System.Net.Http.Json;
 public class Program
 {
     private readonly HttpClient _client;
+    private OpenMeteoApi weatherApi;
     private string dateTimeStr;
 
     public Program(HttpClient client)
     {
         _client = client;
+        weatherApi = new OpenMeteoApi(_client);
     }
 
     public void Run()
-    {
+    {       
         var canadaDateTime = GetDateTime(LocationUrls.WorldTimeTorontoUrl);
         var ukDateTime = GetDateTime(LocationUrls.WorldTimeLondonUrl);
-
+        
         Console.WriteLine("Please, specify your location (UK or Canada):");
         string location = Console.ReadLine();
+
+        weatherApi.GetTemperatureByLocation(location);
 
         DisplayDateTime("UK Time", ukDateTime);
         DisplayDateTime("Canada Time", canadaDateTime);
