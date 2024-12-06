@@ -1,10 +1,5 @@
 ﻿using Application.Constants;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Weather
 {
@@ -17,24 +12,24 @@ namespace Application.Weather
             _client = client;
         }
 
-        public async void GetTemperatureByLocation(string location)
+        public void GetTemperatureByLocation(string location)
         {
             HttpResponseMessage response;
 
               if (location == "UK")
             {
-                response = await _client.GetAsync(LocationUrls.OpenMeteoLondonUrl);
+                response = _client.GetAsync(LocationUrls.OpenMeteoLondonUrl).Result;
             }
               else if(location == "Canada")
             {
-                response = await _client.GetAsync(LocationUrls.OpenMeteoTorontoUrl);
+                response = _client.GetAsync(LocationUrls.OpenMeteoTorontoUrl).Result;
             }
               else
             {
                 throw new Exception("Wrong location was specified");
             }
                
-              string responseBody = await response.Content.ReadAsStringAsync();
+              string responseBody = response.Content.ReadAsStringAsync().Result;
               JObject data = JObject.Parse(responseBody);
 
               // Get the current time rounded down to the nearest hour in ISO 8601 format
@@ -60,7 +55,7 @@ namespace Application.Weather
               if (timeIndex != -1)
               {
                   currentTemperature = temperatures[timeIndex].ToObject<double>();
-                  Console.WriteLine($"The current temperature at {currentTime} is {currentTemperature}°C");
+                  Console.WriteLine($"The current temperature in {location} at {currentTime} is {currentTemperature}°C");
               }
               else
               {

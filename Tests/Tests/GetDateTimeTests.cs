@@ -2,6 +2,7 @@
 using Tests.Utilities;
 using System.Net;
 using Application.Constants;
+using Application.WorldTime;
 
 
 namespace Tests.Tests
@@ -17,9 +18,9 @@ namespace Tests.Tests
             var mockHttpMessageHandler = MockHttpResponseMessage.
                 MockSuccessfullHttpResponse(dateTime);
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var program = new Program(httpClient);
+            var worldTimeApi = new WorldTimeApi(httpClient);
 
-            var result = program.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
+            var result = worldTimeApi.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
 
             var expectedDateTimeOffset = DateTimeOffset.ParseExact(
             dateTime,
@@ -37,12 +38,12 @@ namespace Tests.Tests
                 MockFallureHttpResponse(HttpStatusCode.BadGateway);
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var program = new Program(httpClient);
+            var worldTimeApi = new WorldTimeApi(httpClient);
             string result = null;
 
             try
             {
-                program.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
+                worldTimeApi.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
             }
             catch (Exception ex)
             {
@@ -60,12 +61,12 @@ namespace Tests.Tests
                 MockFallureHttpResponse(HttpStatusCode.NotFound);
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var program = new Program(httpClient);
+            var worldTimeApi = new WorldTimeApi(httpClient);
             string result = null;
 
             try
             {
-                program.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
+                worldTimeApi.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
             }
             catch (Exception ex)
             {

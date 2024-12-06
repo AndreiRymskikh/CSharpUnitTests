@@ -1,3 +1,4 @@
+using Application.WorldTime;
 using System.Reflection;
 
 namespace Tests.Tests
@@ -10,11 +11,11 @@ namespace Tests.Tests
         public void DisplayDateTimeOutputCorrectFormat()
         {
             var dateTime = new DateTimeOffset(2024, 11, 20, 08, 16, 14, TimeSpan.FromHours(1));
-            var program = new Program(null);
+            var worldTimeApi = new WorldTimeApi(null);
             var expectedOutput = "Test Label: Wednesday 20 November 2024 08:16:14";
 
             var consoleOutputReader = new ConsoleReader();
-            program.DisplayDateTime("Test Label", dateTime);
+            worldTimeApi.DisplayDateTime("Test Label", dateTime);
             var result = consoleOutputReader.ConsoleOutput();
 
             Assert.AreEqual(expectedOutput, result);
@@ -25,20 +26,20 @@ namespace Tests.Tests
         public void CheckDateTimeFormatIsCorrect()
         {
             var dateTime = new DateTimeOffset(2024, 11, 20, 08, 16, 14, TimeSpan.FromHours(1));
-            var program = new Program(null);
+            var worldTimeApi = new WorldTimeApi(null);
             var expectedDateTime = "Wednesday 20 November 2024 08:16:14";
             string actualDateTime = null;
 
-            program.DisplayDateTime("Test Label", dateTime);
+            worldTimeApi.DisplayDateTime("Test Label", dateTime);
 
-            var fieldInfo = typeof(Program).GetField(
+            var fieldInfo = typeof(WorldTimeApi).GetField(
                 "dateTimeStr", 
                 BindingFlags.NonPublic | 
                 BindingFlags.Instance);
 
             if (fieldInfo != null)
             {
-                actualDateTime = (string)fieldInfo.GetValue(program);
+                actualDateTime = (string)fieldInfo.GetValue(worldTimeApi);
             } 
             else
             {

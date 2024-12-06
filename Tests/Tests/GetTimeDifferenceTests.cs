@@ -1,3 +1,5 @@
+using Application.WorldTime;
+
 namespace Tests.Tests
 {
     [TestClass]
@@ -8,10 +10,10 @@ namespace Tests.Tests
         {
             var ukDateTime = new DateTimeOffset(2024, 11, 20, 08, 16, 14, TimeSpan.FromHours(0));
             var canadaDateTime = new DateTimeOffset(2024, 11, 20, 03, 16, 14, TimeSpan.FromHours(-5));
-            var program = new Program(null);
+            var worldTimeApi = new WorldTimeApi(null);
 
             var consoleOutputReader = new ConsoleReader();
-            program.DisplayTimeDifference("UK", ukDateTime.DateTime, canadaDateTime.DateTime);
+            worldTimeApi.DisplayTimeDifference("UK", ukDateTime.DateTime, canadaDateTime.DateTime);
             var result = consoleOutputReader.ConsoleOutput();
 
             var expectedOutput = "You are 5h ahead of Canada";
@@ -23,10 +25,10 @@ namespace Tests.Tests
         {
             var ukDateTime = new DateTimeOffset(2024, 11, 20, 08, 16, 14, TimeSpan.FromHours(0));
             var canadaDateTime = new DateTimeOffset(2024, 11, 20, 03, 16, 14, TimeSpan.FromHours(-5));
-            var program = new Program(null);
+            var worldTimeApi = new WorldTimeApi(null);
 
             var consoleOutputReader = new ConsoleReader();
-            program.DisplayTimeDifference("Canada", ukDateTime.DateTime, canadaDateTime.DateTime);
+            worldTimeApi.DisplayTimeDifference("Canada", ukDateTime.DateTime, canadaDateTime.DateTime);
             var result = consoleOutputReader.ConsoleOutput();
 
             var expectedOutput = "You are 5h behind UK";
@@ -38,10 +40,10 @@ namespace Tests.Tests
         {
             var ukDateTime = new DateTimeOffset(2024, 11, 20, 08, 16, 14, TimeSpan.FromHours(0));
             var canadaDateTime = new DateTimeOffset(2024, 11, 20, 03, 16, 14, TimeSpan.FromHours(-5));
-            var program = new Program(null);
+            var worldTimeApi = new WorldTimeApi(null);
 
             var consoleOutputReader = new ConsoleReader();
-            program.DisplayTimeDifference("WrongLocation", ukDateTime.DateTime, canadaDateTime.DateTime);
+            worldTimeApi.DisplayTimeDifference("WrongLocation", ukDateTime.DateTime, canadaDateTime.DateTime);
             var result = consoleOutputReader.ConsoleOutput();
 
             var expectedOutput = "Wrong location value. It can be UK or Canada";
