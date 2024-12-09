@@ -12,7 +12,7 @@ namespace Application.Weather
             _client = client;
         }
 
-        public void GetTemperatureByLocation(string location)
+        public JObject GetTemperatureByLocation(string location)
         {
             HttpResponseMessage response;
 
@@ -32,35 +32,46 @@ namespace Application.Weather
               string responseBody = response.Content.ReadAsStringAsync().Result;
               JObject data = JObject.Parse(responseBody);
 
-              // Get the current time rounded down to the nearest hour in ISO 8601 format
-              DateTime now = DateTime.UtcNow;
-              string currentTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0).
-                    ToString(DateTimeFormats.OpenMeteoDateTimeFormat);
-              double currentTemperature;
+            return data;
+        }
 
-              // Find the temperature for the current time
-              var times = data["hourly"]["time"];
-              var temperatures = data["hourly"]["temperature_2m"];
-              int timeIndex = -1;
+        public void FindTemperatureForCurrentTime(string location, JObject data) 
+        {
+            // Get the current time rounded down to the nearest hour in ISO 8601 format
+            DateTime now = DateTime.UtcNow;
+            string currentTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0).
+                  ToString(DateTimeFormats.OpenMeteoDateTimeFormat);
+            double currentTemperature;
 
-              for (int i = 0; i < times.Count(); i++)
-              {
-                  if (times[i].ToString() == currentTime)
-                  {
-                        timeIndex = i;
-                        break;
-                  }
-              }
+            // Find the temperature for the current time
+            var times = data["hourly"]["time"];
+            var temperatures = data["hourly"]["temperature_2m"];
+            int timeIndex = -1;
 
-              if (timeIndex != -1)
-              {
-                  currentTemperature = temperatures[timeIndex].ToObject<double>();
-                  Console.WriteLine($"The current temperature in {location} at {currentTime} is {currentTemperature}°C");
-              }
-              else
-              {
-                  Console.WriteLine("Current time not found in the data.");
-              }        
+            for (int i = 0; i < times.Count(); i++)
+            {
+                if (times[i].ToString() == currentTime)
+                {
+                    timeIndex = i;
+                    break;
+                }
+            }
+
+            if (timeIndex != -1)
+            {
+                currentTemperature = temperatures[timeIndex].ToObject<double>();
+                Console.WriteLine($"The current temperature in {location} at {currentTime} is {currentTemperature}°C");
+            }
+            else
+            {
+                Console.WriteLine("Current time not found in the data.");
+            }
+        }
+
+        public void OutputTemperatureForCurrentLocation(string location)
+        {
+            var data = GetTemperatureByLocation(location);
+            FindTemperatureForCurrentTime(location, data);
         }
     }
 }

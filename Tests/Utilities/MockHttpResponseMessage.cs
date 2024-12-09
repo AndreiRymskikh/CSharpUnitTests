@@ -4,18 +4,15 @@ using Moq;
 using System.Net.Http.Json;
 using System.Net;
 using Application.WorldTime;
+using System.Collections.Generic;
 
 namespace Tests.Utilities
 {
     public static class MockHttpResponseMessage
     {
-        public static Mock<HttpMessageHandler> MockSuccessfullHttpResponse(string dateTime)
+        public static Mock<HttpMessageHandler> MockSuccessfullHttpResponse<T>(T expectedResponse)
         {
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            var expectedResponse = new WorldTimeAPIResponse
-            {
-                datetime = dateTime
-            };
 
             mockHttpMessageHandler.Protected()
             .Setup<Task<HttpResponseMessage>>(

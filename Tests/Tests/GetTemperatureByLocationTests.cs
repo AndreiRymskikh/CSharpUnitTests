@@ -3,36 +3,55 @@ using Tests.Utilities;
 using System.Net;
 using Application.Constants;
 using Application.WorldTime;
+using Application.Weather;
+using System;
+using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 
 namespace Tests.Tests
 {
     [TestClass]
-    public class GetDateTimeTests
+    public class GetTemperatureByLocationTests
     {
-        private const string dateTime = "2024-11-20T08:16:14.857403+01:00";
-        private readonly WorldTimeAPIResponse expectedResponse = new WorldTimeAPIResponse
+        private const string weatherData = "{\"latitude\":34,\"longitude\":-79,\"generationtime_ms\":0.04,\"utc_offset_seconds\":0," +
+            "\"timezone\":\"GMT\",\"timezone_abbreviation\":\"GMT\",\"elevation\":55.1,\"hourly_units\":{\"time\":\"iso8601\"," +
+            "\"temperature_2m\":\"°C\"},\"hourly\":{\"time\":[\"2024-12-09T12:00\",\"2024-12-09T13:00\"]," +
+            "\"temperature_2m\":[13.1,12.9]}}";
+        private readonly OpenMeteoApiResponse expectedResponse = new OpenMeteoApiResponse
         {
-            datetime = dateTime
+            Latitude = 34,
+            Longitude = -79,
+            Generationtime_ms = 0.04,
+            Utc_offset_seconds = 0,
+            Timezone = "GMT",
+            Timezone_abbreviation = "GMT",
+            Elevation = 55.1,
+            Hourly_units = new HourlyUnits
+            {
+                Time = "iso8601",
+                Temperature_2m = "°C",
+            },
+            Hourly = new Hourly
+            {
+                Time = new List<string> { "2024-12-09T12:00", "2024-12-09T13:00" },
+                Temperature_2m = new List<double> { 13.1, 12.9 }
+            }
         };
 
         [TestMethod]
-        public void GetDateTimeReturnsExpectedDateTime()
+        public void GetTemperatureReturnsExpectedData()
         {
             var mockHttpMessageHandler = MockHttpResponseMessage.
                 MockSuccessfullHttpResponse(expectedResponse);
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var worldTimeApi = new WorldTimeApi(httpClient);
+            var openMeteoApi = new OpenMeteoApi(httpClient);
 
-            var result = worldTimeApi.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
+            string jsonString = openMeteoApi.GetTemperatureByLocation("UK").ToString();
+            // Remove all whitespace characters from the string
+            string resultStr = Regex.Replace(jsonString, @"\s+", "");
 
-            var expectedDateTimeOffset = DateTimeOffset.ParseExact(
-            dateTime,
-            DateTimeFormats.DateTimeFormatToParse,
-            CultureInfo.InvariantCulture
-            );
-
-            Assert.AreEqual(expectedDateTimeOffset, result);
+            Assert.AreEqual(weatherData, resultStr);
         }
 
         [TestMethod]

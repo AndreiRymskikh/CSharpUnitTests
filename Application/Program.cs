@@ -14,7 +14,7 @@ public class Program
 
         string location = Console.ReadLine();
 
-        weatherApi.GetTemperatureByLocation(location);
+        weatherApi.OutputTemperatureForCurrentLocation(location);
         worldTimeApi.OutputWorldTimeData(location);
     }
 }
