@@ -1,3 +1,4 @@
+using Application.Constants;
 using Application.WorldTime;
 
 namespace Tests.Tests
@@ -46,8 +47,7 @@ namespace Tests.Tests
             worldTimeApi.DisplayTimeDifference("WrongLocation", ukDateTime.DateTime, canadaDateTime.DateTime);
             var result = consoleOutputReader.ConsoleOutput();
 
-            var expectedOutput = "Wrong location value. It can be UK or Canada";
-            Assert.AreEqual(expectedOutput, result);
+            Assert.AreEqual(ErrorMessages.WrongLocationErrorMsg, result);
         }
     }
 }

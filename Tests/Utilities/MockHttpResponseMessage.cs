@@ -3,8 +3,6 @@ using Moq.Protected;
 using Moq;
 using System.Net.Http.Json;
 using System.Net;
-using Application.WorldTime;
-using System.Collections.Generic;
 
 namespace Tests.Utilities
 {
@@ -22,7 +20,7 @@ namespace Tests.Utilities
             )
             .ReturnsAsync(new HttpResponseMessage
             {
-                StatusCode = System.Net.HttpStatusCode.OK,
+                StatusCode = HttpStatusCode.OK,
                 Content = JsonContent.Create(expectedResponse)
             });
 

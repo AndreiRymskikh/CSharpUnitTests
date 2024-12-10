@@ -1,11 +1,7 @@
-﻿using System.Globalization;
-using Tests.Utilities;
+﻿using Tests.Utilities;
 using System.Net;
 using Application.Constants;
-using Application.WorldTime;
 using Application.Weather;
-using System;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
 
@@ -47,7 +43,7 @@ namespace Tests.Tests
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
             var openMeteoApi = new OpenMeteoApi(httpClient);
 
-            string jsonString = openMeteoApi.GetTemperatureByLocation("UK").ToString();
+            string jsonString = openMeteoApi.GetTemperatureByLocation(LocationInput.UK.ToString()).ToString();
             // Remove all whitespace characters from the string
             string resultStr = Regex.Replace(jsonString, @"\s+", "");
 
@@ -61,20 +57,19 @@ namespace Tests.Tests
                 MockFallureHttpResponse(HttpStatusCode.BadGateway);
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var worldTimeApi = new WorldTimeApi(httpClient);
+            var openMeteoApi = new OpenMeteoApi(httpClient);
             string result = null;
 
             try
             {
-                worldTimeApi.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
+                openMeteoApi.GetTemperatureByLocation(LocationInput.Canada.ToString());
             }
             catch (Exception ex)
             {
                 result = ex.Message;
             }
 
-            var expectedErrorMessage = "Bad Gateway error occurred while fetching the date and time.";
-            Assert.AreEqual(expectedErrorMessage, result);
+            Assert.AreEqual(ErrorMessages.BadGatewayErrorMsg, result);
         }
 
         [TestMethod]
@@ -84,20 +79,41 @@ namespace Tests.Tests
                 MockFallureHttpResponse(HttpStatusCode.NotFound);
 
             var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var worldTimeApi = new WorldTimeApi(httpClient);
+            var openMeteoApi = new OpenMeteoApi(httpClient);
             string result = null;
 
             try
             {
-                worldTimeApi.GetDateTime(LocationUrls.WorldTimeTorontoUrl);
+                openMeteoApi.GetTemperatureByLocation(LocationInput.UK.ToString());
             }
             catch (Exception ex)
             {
                 result = ex.Message;
             }
 
-            var expectedErrorMessage = "The endpoint is Not found. Please, try later.";
-            Assert.AreEqual(expectedErrorMessage, result);
+            Assert.AreEqual(ErrorMessages.NotFoundErrorMsg, result);
+        }
+
+        [TestMethod]
+        public void GetDateTimeReturnsCorrectWrongLocationError()
+        {
+            var mockHttpMessageHandler = MockHttpResponseMessage.
+                MockFallureHttpResponse(HttpStatusCode.NotFound);
+
+            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            var openMeteoApi = new OpenMeteoApi(httpClient);
+            string result = null;
+
+            try
+            {
+                openMeteoApi.GetTemperatureByLocation("WrongLocation");
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+
+            Assert.AreEqual(ErrorMessages.WrongLocationErrorMsg, result);
         }
     }
 }

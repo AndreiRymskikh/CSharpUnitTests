@@ -54,8 +54,7 @@ namespace Tests.Tests
                 result = ex.Message;
             }
 
-            var expectedErrorMessage = "Bad Gateway error occurred while fetching the date and time.";
-            Assert.AreEqual(expectedErrorMessage, result);
+            Assert.AreEqual(ErrorMessages.BadGatewayErrorMsg, result);
         }
 
         [TestMethod]
@@ -77,8 +76,7 @@ namespace Tests.Tests
                 result = ex.Message;
             }
 
-            var expectedErrorMessage = "The endpoint is Not found. Please, try later.";
-            Assert.AreEqual(expectedErrorMessage, result);
+            Assert.AreEqual(ErrorMessages.NotFoundErrorMsg, result);
         }
     }
 }

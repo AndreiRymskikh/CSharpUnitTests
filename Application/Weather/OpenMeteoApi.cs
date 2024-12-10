@@ -1,5 +1,6 @@
 ﻿using Application.Constants;
 using Newtonsoft.Json.Linq;
+using System.Net;
 
 namespace Application.Weather
 {
@@ -14,25 +15,39 @@ namespace Application.Weather
 
         public JObject GetTemperatureByLocation(string location)
         {
-            HttpResponseMessage response;
+            HttpResponseMessage response = null;
+            JObject data;
 
-              if (location == "UK")
+            try
             {
-                response = _client.GetAsync(LocationUrls.OpenMeteoLondonUrl).Result;
-            }
-              else if(location == "Canada")
-            {
-                response = _client.GetAsync(LocationUrls.OpenMeteoTorontoUrl).Result;
-            }
-              else
-            {
-                throw new Exception("Wrong location was specified");
-            }
-               
-              string responseBody = response.Content.ReadAsStringAsync().Result;
-              JObject data = JObject.Parse(responseBody);
+                if (location == LocationInput.UK.ToString())
+                {
+                    response = _client.GetAsync(LocationUrls.OpenMeteoLondonUrl).Result;
+                }
+                else if (location == LocationInput.Canada.ToString())
+                {
+                    response = _client.GetAsync(LocationUrls.OpenMeteoTorontoUrl).Result;
+                }
+                else
+                {
+                    throw new Exception(ErrorMessages.WrongLocationErrorMsg);
+                }
 
-            return data;
+                string responseBody = response.Content.ReadAsStringAsync().Result;
+                data = JObject.Parse(responseBody);
+
+                return data;
+            }
+            catch (Exception ex) when ((ex.InnerException is HttpRequestException httpRequestException &&
+            httpRequestException.StatusCode == HttpStatusCode.BadGateway) || response.StatusCode == HttpStatusCode.BadGateway)
+            {
+                throw new Exception(ErrorMessages.BadGatewayErrorMsg);
+            }
+            catch (Exception ex) when ((ex.InnerException is HttpRequestException httpRequestException &&
+            httpRequestException.StatusCode == HttpStatusCode.NotFound) || response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new Exception(ErrorMessages.NotFoundErrorMsg);
+            }
         }
 
         public void FindTemperatureForCurrentTime(string location, JObject data) 

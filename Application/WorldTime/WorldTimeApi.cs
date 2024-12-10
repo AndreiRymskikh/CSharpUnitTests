@@ -1,12 +1,7 @@
 ﻿using Application.Constants;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Net.Http.Json;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.WorldTime
 {
@@ -35,14 +30,13 @@ namespace Application.WorldTime
             catch (Exception ex) when (ex.InnerException is HttpRequestException httpRequestException &&
             httpRequestException.StatusCode == HttpStatusCode.BadGateway)
             {
-                throw new Exception("Bad Gateway error occurred while fetching the date and time.");
+                throw new Exception(ErrorMessages.BadGatewayErrorMsg);
             }
             catch (Exception ex) when (ex.InnerException is HttpRequestException httpRequestException &&
             httpRequestException.StatusCode == HttpStatusCode.NotFound)
             {
-                throw new Exception("The endpoint is Not found. Please, try later.");
+                throw new Exception(ErrorMessages.NotFoundErrorMsg);
             }
-
         }
 
         public void DisplayDateTime(string label, DateTimeOffset dateTime)
@@ -65,7 +59,7 @@ namespace Application.WorldTime
                     Console.WriteLine($"You are {timeDifference}h behind UK");
                     break;
                 default:
-                    Console.WriteLine("Wrong location value. It can be UK or Canada");
+                    Console.WriteLine(ErrorMessages.WrongLocationErrorMsg);
                     break;
             }
         }
