@@ -1,4 +1,5 @@
 # CSharpUnitTests
+A simple project to practice Unit testing skills
 
 ## Setup
 You will need [Visual Studio](https://visualstudio.microsoft.com/vs/community/) or similar IDE  
@@ -27,4 +28,5 @@ So I know what time it is for my colleagues
 * Must display the current time for the UK and Canada
 * Date and time must be displayed in the format `Monday 1 January 2023 17:00:00`
 * Must display the difference in time between the UK and Canada
+* Must show temperature for current location
 
