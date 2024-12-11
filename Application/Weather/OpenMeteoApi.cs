@@ -7,10 +7,20 @@ namespace Application.Weather
     internal class OpenMeteoApi
     {
         private readonly HttpClient _client;
+        private string currentTime;
+        private double currentTemperature;
 
         public OpenMeteoApi(HttpClient client)
         {
             _client = client;
+            currentTime = new DateTime(
+                DateTime.UtcNow.Year, 
+                DateTime.UtcNow.Month, 
+                DateTime.UtcNow.Day, 
+                DateTime.UtcNow.Hour, 
+                0, 
+                0).
+                  ToString(DateTimeFormats.OpenMeteoDateTimeFormat);
         }
 
         public JObject GetTemperatureByLocation(string location)
@@ -52,12 +62,6 @@ namespace Application.Weather
 
         public void FindTemperatureForCurrentTime(string location, JObject data) 
         {
-            // Get the current time rounded down to the nearest hour in ISO 8601 format
-            DateTime now = DateTime.UtcNow;
-            string currentTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0).
-                  ToString(DateTimeFormats.OpenMeteoDateTimeFormat);
-            double currentTemperature;
-
             // Find the temperature for the current time
             var times = data["hourly"]["time"];
             var temperatures = data["hourly"]["temperature_2m"];
