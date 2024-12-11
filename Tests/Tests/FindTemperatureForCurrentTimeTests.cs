@@ -36,6 +36,25 @@ namespace Tests.Tests
             var actualTemperature = (double)fieldInfoCurrentTemperature.GetValue(openMeteoApi);
 
             Assert.AreEqual(13.1, actualTemperature);
-        }  
+        }
+
+        [TestMethod]
+        public void FindTemperatureForCurrentTimeReturnsExpectedError()
+        {
+            var jsonObjectData = JObject.Parse(weatherData);
+            var openMeteoApi = new OpenMeteoApi(null);
+            string actualErrorMsg = null;
+
+            try
+            {
+                openMeteoApi.FindTemperatureForCurrentTime(LocationInput.Canada.ToString(), jsonObjectData);
+            }
+            catch (Exception ex)
+            {
+                actualErrorMsg = ex.Message;
+            }
+
+            Assert.AreEqual(ErrorMessages.CurrentTimeNotFound, actualErrorMsg);
+        }
     }
 }

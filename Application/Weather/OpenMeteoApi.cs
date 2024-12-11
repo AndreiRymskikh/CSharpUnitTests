@@ -83,7 +83,7 @@ namespace Application.Weather
             }
             else
             {
-                Console.WriteLine("Current time not found in the data.");
+                throw new Exception(ErrorMessages.CurrentTimeNotFound);
             }
         }
 
